@@ -100,3 +100,42 @@ button{
 form h1{
   text-align: center;
 }
+
+/* Estilos básicos para el contenido del editor */
+.ProseMirror {
+  border: 1px solid #ccc;
+  min-height: 200px;
+  padding: 15px;
+  border-radius: 4px;
+  background-color: #fff;
+  outline: none; /* Elimina el borde de enfoque por defecto */
+}
+
+/* Estilos para los elementos de texto */
+.ProseMirror p {
+  margin: 0 0 1em 0; /* Espaciado entre párrafos */
+}
+
+.ProseMirror h1, .ProseMirror h2, .ProseMirror h3, .ProseMirror h4, .ProseMirror h5, .ProseMirror h6 {
+  margin-top: 1.5em;
+  margin-bottom: 0.5em;
+  line-height: 1.2;
+}
+
+.ProseMirror strong {
+  font-weight: bold;
+}
+
+.ProseMirror em {
+  font-style: italic;
+}
+
+.ProseMirror s {
+  text-decoration: line-through;
+}
+
+.ProseMirror ul, .ProseMirror ol {
+  padding-left: 20px;
+  margin: 1em 0;
+}
+
