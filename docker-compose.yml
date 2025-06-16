@@ -1,0 +1,45 @@
+
+services:
+  frontend:
+    build: ./client
+    ports:
+      - "3000:80"  # Accede en http://localhost:3000
+    volumes:
+      - ./client:/app  # Monta código para desarrollo en caliente
+      - /app/node_modules
+    networks:
+      - mern-network
+
+  backend:
+    build: ./api
+    ports:
+      - "4000:4000"  # API en http://localhost:4000
+    environment:
+      - MONGO_URI=mongodb://bloguser:blogpass@mongo:27017/blogdb?authSource=admin
+      - NODE_ENV=development
+    volumes:
+      - ./api:/app
+      - /app/node_modules
+    depends_on:
+      - mongo
+    networks:
+      - mern-network
+
+  mongo:
+    image: mongo:latest
+    environment:
+      - MONGO_INITDB_ROOT_USERNAME=bloguser
+      - MONGO_INITDB_ROOT_PASSWORD=blogpass
+      - MONGO_INITDB_DATABASE=blogdb
+    volumes:
+      - mongo-data:/data/db  # Persistencia
+    ports:
+      - "27017:27017"  # Opcional: acceso directo desde host
+    networks:
+      - mern-network
+
+volumes:
+  mongo-data:
+
+networks:
+  mern-network:
