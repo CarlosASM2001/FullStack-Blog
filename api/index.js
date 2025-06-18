@@ -7,6 +7,9 @@ const User = require('./models/User');
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 const cookieParser = require('cookie-parser');
+const multer = require('multer');
+const uploadMiddleware = multer({ dest: 'uploads/' });
+const fs = require('fs');
 
 const salt = bcrypt.genSaltSync(10);
 const secret  = 'dfbdfbd5f644ergerg45brtbr';
@@ -17,14 +20,15 @@ app.use(cookieParser());
 
 
 //desarrollo
+/*
 mongoose.connect('mongodb://bloguser:blogpass@localhost:27017/blogdb?authSource=admin').then(() => console.log('Conectado a MongoDB'))
-  .catch(err => console.error('Error al conectar a MongoDB:', err));
+  .catch(err => console.error('Error al conectar a MongoDB:', err));*/
 
 // Producción
-/*
+
 mongoose.connect(process.env.MONGO_URI || 'mongodb://bloguser:blogpass@mongo:27017/blogdb?authSource=admin')
   .then(() => console.log('Conectado a MongoDB'))
-  .catch(err => console.error('Error al conectar a MongoDB:', err));*/
+  .catch(err => console.error('Error al conectar a MongoDB:', err));
 
 
 //mongoose.connect('mongodb+srv://calsemo2001:CJhdawB8lV8p1oyK@cluster0.1nl0brg.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0');
@@ -121,6 +125,26 @@ app.get('/profile', (req,res) =>{
 app.post('/logout' , (req,res) => {
     res.cookie('token' , '').json('ok');
 })
+
+
+app.post('/post',uploadMiddleware.single('file'),(req, res) => {
+
+  const {originalname, path} = req.file;
+
+  const parts = originalname.split('.');
+  const ext = parts[parts.length - 1];
+  const newPath = path + '.' + ext;
+  fs.renameSync(path, newPath); // Renombrar el archivo con su extensión original
+
+
+
+
+
+  res.json({ext});
+
+
+});
+
 
 
 //desarrollo
