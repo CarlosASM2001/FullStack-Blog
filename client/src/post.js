@@ -1,19 +1,29 @@
-export default function Post(){
+import {formatISO9075} from 'date-fns';
+import { Link } from 'react-router-dom';
+
+export default function Post({_id,title, summary, cover, content,createdAt, author}){
+
+
+
+
+
     return (
         <div className='post'>
             <div className='image'>
-                <img src="https://techcrunch.com/wp-content/uploads/2024/10/GettyImages-2171029274.jpg?resize=1280,958" alt=''/>
+                <Link to={`/post/${_id}`}>
+                    <img src={'http://localhost:4000/'+cover} alt=''/>
+                </Link>
             </div>
             <div className='texts'>
-                <h2>WWDC 2025: What to expect from this year’s conference</h2>
+                <Link to={`/post/${_id}`} className='title'>
+                    <h2>{title}</h2>
+                </Link>
                 <p className='info'>
-                    <span className='Author'>Carlos Serrano</span>
-                    <time>2025-06-06  16:45</time>
+                    <span className='Author'>{author.username}</span>
+                    <time>{formatISO9075(createdAt)}</time>
                 </p>
                 <p className='summary'>
-                    WWDC 2025, Apple’s annual developers conference, starts at 10 a.m. PT / 1 p.m. ET. Monday. 
-                    Last year’s event was notable for its focus on AI, and this year, 
-                    there is considerable pressure on the company to build on its promises.
+                    {summary}
                 </p>
             </div>
         </div>

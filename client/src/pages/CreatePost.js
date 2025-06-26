@@ -1,6 +1,7 @@
 import '../TiptapStyles.css';
 import Tiptap from "../Tiptap";
 import { useState } from "react";
+import { Navigate } from 'react-router-dom';
 
 
 export default function CreatePost() {
@@ -10,7 +11,7 @@ export default function CreatePost() {
     const [summary, setSummary] = useState('');
     const [content, setContent] = useState('');
     const [files, setFiles] = useState('');
-
+    const [redirect, setRedirect] = useState(false);
 
 
     async function createNewPost(e) {
@@ -30,12 +31,18 @@ export default function CreatePost() {
         const response = await fetch('http://localhost:4000/post', {
             method: 'POST',
             body: data,
+            credentials: 'include',
     
         });
 
-        console.log(await response.json());
+        if(response.ok) {
+            setRedirect(true);
+        }
     }
 
+    if (redirect) { 
+        return <Navigate to={'/'} />
+    }
     return (
         <div className="create-post">
             <h1>Create New Post</h1>
