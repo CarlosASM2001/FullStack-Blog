@@ -21,17 +21,17 @@ app.use(cookieParser());
 app.use('/uploads', express.static(__dirname + '/uploads'));
 
 //desarrollo
-
+/*
 mongoose.connect('mongodb://bloguser:blogpass@localhost:27017/blogdb?authSource=admin').then(() => console.log('Conectado a MongoDB'))
-  .catch(err => console.error('Error al conectar a MongoDB:', err));
+  .catch(err => console.error('Error al conectar a MongoDB:', err));*/
 
 // Producción
-/*
+
 mongoose.connect(process.env.MONGO_URI || 'mongodb://bloguser:blogpass@mongo:27017/blogdb?authSource=admin')
   .then(() => console.log('Conectado a MongoDB'))
   .catch(err => console.error('Error al conectar a MongoDB:', err));
 
-*/
+
 //mongoose.connect('mongodb+srv://calsemo2001:CJhdawB8lV8p1oyK@cluster0.1nl0brg.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0');
 
 
@@ -169,7 +169,11 @@ app.post('/post',uploadMiddleware.single('file'), async (req, res) => {
 });
 
 
-
+app.get('/post/:id', async (req, res) => {
+    const {id} = req.params;
+    const postDoc = await Post.findById(id).populate('author', ['username']);
+    res.json(postDoc);
+});
 
 
 app.post('/logout' , (req,res) => {
