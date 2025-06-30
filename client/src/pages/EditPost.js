@@ -1,48 +1,63 @@
-import '../TiptapStyles.css';
+import { useEffect, useState } from "react";
+import { Navigate,useParams } from "react-router-dom";
 import Tiptap from "../Tiptap";
-import { useState } from "react";
-import { Navigate } from 'react-router-dom';
 
 
-export default function CreatePost() {
 
-
+export default function EditPost() {
     const [title, setTitle] = useState('');
     const [summary, setSummary] = useState('');
     const [content, setContent] = useState('');
     const [files, setFiles] = useState('');
     const [redirect, setRedirect] = useState(false);
+    const {id} = useParams();
 
 
-    async function createNewPost(e) {
+    useEffect(() => {
+        fetch(`http://localhost:4000/post/${id}`)
+            .then(response => {
+                response.json().then(postInfo => {
+                    setTitle(postInfo.title);
+                    setSummary(postInfo.summary);
+                    setContent(postInfo.content);
+                })
+            });
+    }, [id]);
+
+    async function updatePost(e) {
         e.preventDefault();
+
         const data = new FormData();
         data.set('title', title);
         data.set('summary', summary);
         data.set('content', content);
-        data.set('file', files[0]);
+        data.set('id', id);
 
-   
-
+        if(files?.[0]){
+            data.set('file', files?.[0]);
+        }
+        
         const response = await fetch('http://localhost:4000/post', {
-            method: 'POST',
+            method: 'PUT',
             body: data,
             credentials: 'include',
-    
         });
 
         if(response.ok) {
             setRedirect(true);
         }
+
+        
     }
 
+
     if (redirect) { 
-        return <Navigate to={'/'} />
+        return <Navigate to={'/post/'+id} />
     }
     return (
         <div className="create-post">
-            <h1>Create New Post</h1>
-            <form onSubmit={createNewPost}>
+            <h1>Update Post</h1>
+            <form onSubmit={updatePost}>
                 <input type="title" 
                     placeholder={'Title'}  
                     value={title} 
@@ -55,8 +70,10 @@ export default function CreatePost() {
                     onChange={e => setFiles(e.target.files)} />
                 <Tiptap value={content} 
                     onChange={setContent} />
-                <button type="submit">Publish</button>
+                <button type="submit">Update Post</button>
             </form>
         </div>
     );
+
+
 }
