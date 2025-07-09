@@ -1,40 +1,44 @@
 
+
 services:
   frontend:
-    build: ./client
+    build:
+      context: ./client
+      args:
+        - API_URL=${API_URL}
     ports:
-      - "3000:80"  # Accede en http://localhost:3000
-    volumes:
-      - ./client:/app  # Monta código para desarrollo en caliente
-      - /app/node_modules
+      - "3000:80"
     networks:
       - mern-network
+    depends_on:
+      - backend
 
   backend:
     build: ./api
     ports:
-      - "4000:4000"  # API en http://localhost:4000
+      - "4000:4000"
     environment:
-      - MONGO_URI=mongodb://bloguser:blogpass@mongo:27017/blogdb?authSource=admin
-      - NODE_ENV=development
-    volumes:
-      - ./api:/app
-      - /app/node_modules
-    depends_on:
-      - mongo
+      - MONGO_URI=mongodb://${MONGO_USER}:${MONGO_PASS}@mongo:27017/${MONGO_DB}?authSource=admin
+      - NODE_ENV=production
     networks:
       - mern-network
+    depends_on:
+      mongo:
+        condition: service_healthy
 
   mongo:
     image: mongo:latest
     environment:
-      - MONGO_INITDB_ROOT_USERNAME=bloguser
-      - MONGO_INITDB_ROOT_PASSWORD=blogpass
-      - MONGO_INITDB_DATABASE=blogdb
+      - MONGO_INITDB_ROOT_USERNAME=${MONGO_USER}
+      - MONGO_INITDB_ROOT_PASSWORD=${MONGO_PASS}
+      - MONGO_INITDB_DATABASE=${MONGO_DB}
     volumes:
-      - mongo-data:/data/db  # Persistencia
-    ports:
-      - "27017:27017"  # Opcional: acceso directo desde host
+      - mongo-data:/data/db
+    healthcheck:
+      test: echo 'db.runCommand("ping").ok' | mongosh localhost:27017/${MONGO_DB} --quiet --username $${MONGO_USER} --password $${MONGO_PASS}
+      interval: 10s
+      timeout: 5s
+      retries: 5
     networks:
       - mern-network
 
