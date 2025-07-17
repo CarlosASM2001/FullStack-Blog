@@ -7,8 +7,7 @@ Este proyecto implementa una aplicación de blog simple utilizando una arquitect
 - **Base de Datos**: MongoDB con persistencia de datos
 
 ## Prerrequisitos
-- Docker Engine 20.10+
-- Docker Compose 2.5+
+- Docker Desktop
 - Git (opcional)
 
 ## Configuración Inicial
@@ -30,16 +29,23 @@ MONGO_PASS=blogpass
 MONGO_DB=blogdb
 API_URL=http://backend:4000
 ```
+<img width="416" height="152" alt="image" src="https://github.com/user-attachments/assets/0e54e6a3-768f-4e06-95ce-0cee44fdbf7d" />
 
 ### 3. Despliegue con Docker Compose
 Construir imágenes e iniciar contenedores:
+3.1 - Iniciar Docker Desktop
 ```bash
 docker-compose up -d --build
 ```
+<img width="462" height="156" alt="image" src="https://github.com/user-attachments/assets/a3e3e79e-a8f3-40f2-87c9-e31ccb06fddd" />
+
+
 Verificar estado de los servicios:
 ```bash
 docker-compose ps
 ```
+<img width="1563" height="176" alt="image" src="https://github.com/user-attachments/assets/5e8bb71c-1223-4369-aaab-072086384298" />
+
 ### 4. Variables de entorno requeridas
 
 
@@ -60,7 +66,12 @@ Una vez iniciados los contenedores, accede a:
 | :------------ | :----------------------------------- |
 | Frontend      | [http://localhost:3000](http://localhost:3000) |
 | Backend (API) | [http://localhost:4000/users](http://localhost:4000/users) |
-| MongoDB       | `mongodb://<MONGO_USER>:<MONGO_PASS>@localhost:27017/<MONGO_DB>?authSource=admin` (Compass) |
+| MongoDB  (Compass)     | `mongodb://<MONGO_USER>:<MONGO_PASS>@localhost:27017/<MONGO_DB>?authSource=admin` |
+
+
+#MongoDB Compass
+<img width="813" height="257" alt="image" src="https://github.com/user-attachments/assets/109f739b-64a1-480b-bf33-6022196e2828" />
+
 
 ## Administracion de la aplicación
 ```bash
