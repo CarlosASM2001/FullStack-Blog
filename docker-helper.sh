@@ -124,6 +124,47 @@ restore_uploads() {
     echo -e "${GREEN}✅ Uploads restored from $1${NC}"
 }
 
+# Function to fix build issues
+fix_build() {
+    echo -e "${YELLOW}🔧 Fixing Docker build issues...${NC}"
+    echo "This will clean Docker cache and rebuild without cache."
+    read -p "Continue? (y/N): " -n 1 -r
+    echo
+    if [[ $REPLY =~ ^[Yy]$ ]]; then
+        echo -e "${YELLOW}🧹 Cleaning Docker system...${NC}"
+        docker system prune -a -f
+        docker builder prune -a -f
+        
+        echo -e "${YELLOW}🔨 Rebuilding without cache...${NC}"
+        docker-compose down
+        docker-compose build --no-cache
+        docker-compose up -d
+        
+        echo -e "${GREEN}✅ Build fix completed${NC}"
+        echo -e "${BLUE}📱 Frontend: http://localhost:3000${NC}"
+        echo -e "${BLUE}🔧 Backend: http://localhost:4000${NC}"
+    else
+        echo -e "${BLUE}Operation cancelled${NC}"
+    fi
+}
+
+# Function to clean only build cache
+clean_cache() {
+    echo -e "${YELLOW}🧹 Cleaning Docker build cache...${NC}"
+    docker builder prune -a -f
+    docker system prune -f
+    echo -e "${GREEN}✅ Build cache cleaned${NC}"
+}
+
+# Function to rebuild without cache
+rebuild() {
+    echo -e "${YELLOW}🔨 Rebuilding application without cache...${NC}"
+    docker-compose down
+    docker-compose build --no-cache
+    docker-compose up -d
+    echo -e "${GREEN}✅ Rebuild completed${NC}"
+}
+
 # Function to clean up everything
 clean_all() {
     echo -e "${YELLOW}🧹 Cleaning up everything...${NC}"
@@ -131,6 +172,7 @@ clean_all() {
     echo
     if [[ $REPLY =~ ^[Yy]$ ]]; then
         docker-compose down -v --rmi all
+        docker system prune -a -f
         echo -e "${GREEN}✅ Everything cleaned up${NC}"
     else
         echo -e "${BLUE}Operation cancelled${NC}"
@@ -160,6 +202,15 @@ case "$1" in
     "restore")
         restore_uploads "$2"
         ;;
+    "fix-build")
+        fix_build
+        ;;
+    "clean-cache")
+        clean_cache
+        ;;
+    "rebuild")
+        rebuild
+        ;;
     "clean")
         clean_all
         ;;
@@ -170,18 +221,21 @@ case "$1" in
         check_uploads
         ;;
     *)
-        echo "Usage: $0 {start|stop|restart|logs|uploads|backup|restore|clean|status}"
+        echo "Usage: $0 {start|stop|restart|logs|uploads|backup|restore|fix-build|clean-cache|rebuild|clean|status}"
         echo
         echo "Commands:"
-        echo "  start   - Build and start the blog application"
-        echo "  stop    - Stop the blog application"
-        echo "  restart - Restart the blog application"
-        echo "  logs    - Show application logs"
-        echo "  uploads - Check upload persistence status"
-        echo "  backup  - Create backup of uploads"
-        echo "  restore - Restore uploads from backup"
-        echo "  clean   - Remove all containers, volumes, and images"
-        echo "  status  - Show application and upload status"
+        echo "  start      - Build and start the blog application"
+        echo "  stop       - Stop the blog application"
+        echo "  restart    - Restart the blog application"
+        echo "  logs       - Show application logs"
+        echo "  uploads    - Check upload persistence status"
+        echo "  backup     - Create backup of uploads"
+        echo "  restore    - Restore uploads from backup"
+        echo "  fix-build  - Fix Docker build issues (recommended for build errors)"
+        echo "  clean-cache- Clean Docker build cache only"
+        echo "  rebuild    - Force rebuild without cache"
+        echo "  clean      - Remove all containers, volumes, and images"
+        echo "  status     - Show application and upload status"
         exit 1
         ;;
 esac
