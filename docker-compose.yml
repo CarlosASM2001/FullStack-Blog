@@ -20,6 +20,8 @@ services:
     environment:
       - MONGO_URI=mongodb://${MONGO_USER}:${MONGO_PASS}@mongo:27017/${MONGO_DB}?authSource=admin
       - NODE_ENV=production
+    volumes:
+      - uploads-data:/app/uploads
     networks:
       - mern-network
     depends_on:
@@ -46,6 +48,7 @@ services:
 
 volumes:
   mongo-data:
+  uploads-data:
 
 networks:
   mern-network:

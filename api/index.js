@@ -11,11 +11,24 @@ const cookieParser = require('cookie-parser');
 const multer = require('multer');
 const uploadMiddleware = multer({ dest: 'uploads/' });
 const fs = require('fs');
+const path = require('path');
+
+const uploadDir = path.join(__dirname, 'uploads');
+if(!fs.existsSync(uploadDir)) {
+  fs.mkdirSync(uploadDir, { recursive: true });
+}
+
 
 const salt = bcrypt.genSaltSync(10);
 const secret  = 'dfbdfbd5f644ergerg45brtbr';
 
-app.use(cors({credentials: true, origin:'http://localhost:3000'}));
+app.use(cors({
+    credentials: true,
+    origin: process.env.NODE_ENV === 'production' 
+      ? ['http://localhost:3000' , 'http://localhost' , 'http://127.0.0.1:3000']
+      : 'http://localhost:3000'
+
+}));
 app.use(express.json());
 app.use(cookieParser());
 app.use('/uploads', express.static(__dirname + '/uploads'));
